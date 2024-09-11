@@ -1,0 +1,52 @@
+{
+    "model" : "nequip",
+    "trainer" : "base",
+    "l_forces" : true,
+    "fname_traj" : "psb3_pps_train_lattice.traj",
+    "ntrain" : 450 ,
+    "nvalid" : 50,
+    "cutoff" : 6.0,
+    "avg_num_neighbors": 13,
+    "num_radial_basis" : 8,
+    "num_species" : 3,
+    "element" : [1, 6, 7],
+    "nbatch" : 5,
+    "hidden_irreps" : "64x0o + 64x0e + 64x1o + 64x1e",
+    "nlayers" : 3,
+    "features_dim" : 64,
+    "NN" : {
+    	    "rng_seed" :  1,
+    	    "learning_rate" : 0.01,
+    	    "nepoch" : 1000,
+    	    "nsave": 10,
+    	    "restart" : false,
+    	    "fname_pkl" : "chpt.pkl",
+	    "frc_lambda" : 100,
+	    "l2_lambda" : 0.0,
+	    "patience" : 50,
+            "decay_factor" :0.9,
+	    "ema_decay" : 0.99
+
+    },
+    "train" : {
+	    "fname_log" : "loss-train.out",
+	    "train_set_out" : "train_dataset.pkl",
+    	    "valid_set_out" : "valid_dataset.pkl",
+    	    "enr_ave_std_out": "ave_std.pkl"
+    },
+    "predict" : {
+    	    "start" : 0,
+	    "fname_log" : "predict_valid.out",
+	    "nbatch" : 1,
+	    "predict_train_out" : "train_result.pkl",
+	    "predict_valid_out" : "valid_result.pkl",
+	    "test" : {
+		    "start" :  1,
+		    "fname_log" : "predict_test.out",
+		    "fname_traj" : "psb3_pps_train_lattice.traj",
+		    "ndata" : 50,
+		    "test_set_out" : "test_dataset.pkl",
+		    "predict_test_out" : "test_resulut.pkl"
+ 	    }
+    }
+}
