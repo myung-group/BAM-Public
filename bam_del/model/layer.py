@@ -30,7 +30,6 @@ class NEQUIPLayerFlax(flax.linen.Module):
     mlp_activation: Callable[[jnp.ndarray], jnp.ndarray] = jax.nn.silu
     mlp_n_hidden: int = 64
     mlp_n_layers: int = 3
-    active_fn: str = 'relu'
 
     @flax.linen.compact
     def __call__(
@@ -146,12 +145,6 @@ def _impl(
         odd_act=self.odd_activation,
         even_gate_act=self.gate_activation,
     )
-    if self.active_fn == 'relu':
-        node_feats = jax.nn.relu(node_feats.array)
-    elif self.active_fn == 'silu':
-        node_feats = jax.nn.silu(node_feats.array)
-    else:
-        node_feats = node_feats.array  # 활성화 함수 없이 통과
 
     return node_feats
 

@@ -38,6 +38,8 @@ def get_energy(data_list,
     prd_enr = jnp.array(prd_enr).reshape(-1)
     prd_frc = jnp.array(prd_frc).reshape(-1)
 
+    print(prd_enr)
+
     return prd_enr,  prd_frc
     
 
@@ -55,6 +57,8 @@ def get_exact(data_list, model_ckpt):
         
         exact_enr += list(jnp.array(graph_data.globals['energy'].reshape(-1)[:-1]))
         exact_frc += list(jnp.array(graph_data.globals['forces'].reshape(-1)[:-3]))
+
+    print(jnp.array(exact_enr).reshape(-1))
 
     return jnp.array(exact_enr).reshape(-1), \
            jnp.array(exact_frc).reshape(-1), \
@@ -74,8 +78,7 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
                      hidden_irreps=hidden_irreps,
                      nlayers = json_data['nlayers'],
                      features_dim = json_data['features_dim'],
-                     output_irreps=output_irreps,
-                     active_fn = json_data['active_fn'])
+                     output_irreps=output_irreps)
 
     rng, key = jax.random.split (rng)
     graphset = x_data[0]
@@ -99,6 +102,14 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
 
     data_to_pickle = (E_EXACT , Enr_mean, F_EXACT, Frc_mean)
     
+    E_EXACT = jnp.sqrt(E_EXACT)
+    Enr_mean = jnp.where(Enr_mean < 0, 0, Enr_mean)
+    Enr_mean = jnp.sqrt(Enr_mean)
+    F_EXACT = jnp.where(F_EXACT < 0, 0, F_EXACT)
+    F_EXACT = jnp.sqrt(F_EXACT)
+    Frc_mean = jnp.where(Frc_mean < 0, 0, Frc_mean)
+    Frc_mean = jnp.sqrt(Frc_mean)
+
     if data_type == 'train':
         with open(json_data['predict']['predict_train_out'], 'wb') as f:
             pickle.dump(data_to_pickle, f)

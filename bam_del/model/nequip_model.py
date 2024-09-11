@@ -1,6 +1,7 @@
 from flax import linen as nn 
 import e3nn_jax as e3nn
 import jax.numpy as jnp
+import jax
 from bam_del.model.layer import NEQUIPLayerFlax, default_radial_basis
 
 
@@ -15,7 +16,7 @@ class GraphNN (nn.Module):
     nlayers: int = 4
     features_dim : int = 128
     output_irreps: e3nn.Irreps = e3nn.Irreps("1x0e")
-    active_fn : str = 'relu'
+    active_fn: str = 'relu'
 
     @nn.compact
     def __call__ (self, Rij, data_graph):
@@ -51,14 +52,21 @@ class GraphNN (nn.Module):
                 avg_num_neighbors = self.avg_num_neighbors,
                 num_species = self.num_species,
                 max_ell= self.max_ell,
-                active_fn= self.active_fn
                 )
             node_feats = \
                 layer(Rij, node_feats, species, radial_embedding, iatoms, jatoms)
         
         features = e3nn.flax.Linear("16x0e")(node_feats)
         features = e3nn.flax.Linear("2x0e") (features)  # [energy, enr_var]
-        features = features.array
+        #features = features.array
+        
+        if self.active_fn == 'relu':
+            features = jax.nn.relu(features.array)
+        elif self.active_fn == 'silu':
+            features = jax.nn.silu(features.array)
+        else:
+            features = features.array
+
         graph_energy = e3nn.scatter_sum(features[:, 0], nel=data_graph.n_node)
         
         return graph_energy.reshape(-1)
