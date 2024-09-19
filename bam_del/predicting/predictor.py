@@ -95,7 +95,7 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
         
     ## Correction in Shifted Energy
     e_corr = Enr_mean.mean() - E_EXACT.mean()
-    Enr_mean -= e_corr
+    #Enr_mean -= e_corr
 
     data_to_pickle = (E_EXACT , Enr_mean, F_EXACT, Frc_mean)
     

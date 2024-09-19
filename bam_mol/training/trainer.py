@@ -59,7 +59,7 @@ def energy_fn (graphset, params, apply_fn):
     Rij = get_edge_relative_vectors (R, graphset)
     graph_energy = apply_fn({'params':params}, Rij, graphset)
     mask = jraph.get_graph_padding_mask (graphset)
-    graph_energy = energy*mask
+    graph_energy = graph_energy * mask
 
     return graph_energy.reshape(-1)[:-1]
 

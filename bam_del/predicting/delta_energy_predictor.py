@@ -98,17 +98,12 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
         
     ## Correction in Shifted Energy
     e_corr = Enr_mean.mean() - E_EXACT.mean()
-    Enr_mean -= e_corr
+    #Enr_mean -= e_corr
 
-    data_to_pickle = (E_EXACT , Enr_mean, F_EXACT, Frc_mean)
+    data_to_pickle = (E_EXACT , Enr_mean)
     
     E_EXACT = jnp.sqrt(E_EXACT)
-    Enr_mean = jnp.where(Enr_mean < 0, 0, Enr_mean)
     Enr_mean = jnp.sqrt(Enr_mean)
-    F_EXACT = jnp.where(F_EXACT < 0, 0, F_EXACT)
-    F_EXACT = jnp.sqrt(F_EXACT)
-    Frc_mean = jnp.where(Frc_mean < 0, 0, Frc_mean)
-    Frc_mean = jnp.sqrt(Frc_mean)
 
     if data_type == 'train':
         with open(json_data['predict']['predict_train_out'], 'wb') as f:
@@ -126,9 +121,9 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
         print(f"MM/DD/YYYY HH/MM/SS\t {'DATA':7}{'MAE_E':11}{'E':12}| {'E':11}", file=fout) 
         print('---------------------------------------------------------------------------', file=fout)
         mae_enr = jax.vmap (mae) (E_EXACT, Enr_mean)
-        mae_frc = jax.vmap (mae) (F_EXACT, Frc_mean)
+        #mae_frc = jax.vmap (mae) (F_EXACT, Frc_mean)
         mse_enr = jax.vmap (mse) (E_EXACT, Enr_mean)
-        mse_frc = jax.vmap (mse) (F_EXACT, Frc_mean)
+        #mse_frc = jax.vmap (mse) (F_EXACT, Frc_mean)
         n_e = mae_enr.shape[0]
 
         for i in range(n_e):
@@ -137,8 +132,8 @@ def predictor (rng, x_data, model_ckpt, json_data, fout, do_print, data_type):
         rmse_enr = jnp.sqrt(mse_enr.mean())
         rmse_frc = jnp.sqrt(mse_frc.mean())
         print(f'{date()}\t Corrected_E: {e_corr}', file=fout)
-        print(f'{date()}\t  MAE_E : {mae_enr.mean()},  MAE_F : {mae_frc.mean()}',file=fout)
-        print(f'{date()}\t RMSE_E : {rmse_enr}, RMSE_F : {rmse_frc}',file=fout)
+        print(f'{date()}\t  MAE_E : {mae_enr.mean()}',file=fout)
+        print(f'{date()}\t RMSE_E : {rmse_enr}',file=fout)
 
         print(date())
 
@@ -168,7 +163,7 @@ if __name__ == '__main__':
                             json_data['predict']['nbatch'],
                             json_data['element'],
                             rng = key)
-            fout = open (json_data['predict']['fname_log'], 'w', 1)
+            fout = open ('delta_energy_predict_valid.out', 'w', 1)
             predictor (rng, x_train, model_ckpt, json_data, fout, False, 'train')
             predictor (rng, x_valid, model_ckpt, json_data, fout, True, 'valid')
             fout.close ()
