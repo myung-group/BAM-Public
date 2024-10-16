@@ -2,7 +2,7 @@
 ### BAM
 Bayesian Atoms Modeling
 
-### Installation (NIPA)
+### Installation
 Create a conda environment with python.
 ```shell
 conda create -n $env_name python==($version) 
@@ -20,7 +20,7 @@ conda install -c anaconda cudnn
 Install a `jaxlib` and `nequip-jax`.
 ```shel
 pip install --upgrade pip
-conda install jaxlib=*=*cuda* jax cuda-nvcc -c conda-forge -c nvidia
+pip install -U --pre jax jaxlib jax-cuda12-plugin[with_cuda] jax-cuda12-pjrt -f https://storage.googleapis.com/jax-releases/jax_nightly_releases.html
 pip install git+https://github.com/mariogeiger/nequip-jax
 ```
 
@@ -29,7 +29,7 @@ install a BAM package
 pip install -e .
 ```
 
-#### If the cuda module is supported, or the cuda-toolkit is not installed, proceed with the method below. (frodo, olaf)
+#### If the cuda module is supported, or the cuda-toolkit is not installed, proceed with the method below.
 Create a conda environment with python.
 ```shell
 conda create -n env_name python==($version) # ex) python==3.12.2

@@ -38,8 +38,6 @@ def get_energy(data_list,
     prd_enr = jnp.array(prd_enr).reshape(-1)
     prd_frc = jnp.array(prd_frc).reshape(-1)
 
-    print(prd_enr)
-
     return prd_enr,  prd_frc
     
 
@@ -57,8 +55,6 @@ def get_exact(data_list, model_ckpt):
         
         exact_enr += list(jnp.array(graph_data.globals['energy'].reshape(-1)[:-1]))
         exact_frc += list(jnp.array(graph_data.globals['forces'].reshape(-1)[:-3]))
-
-    print(jnp.array(exact_enr).reshape(-1))
 
     return jnp.array(exact_enr).reshape(-1), \
            jnp.array(exact_frc).reshape(-1), \
